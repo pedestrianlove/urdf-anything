@@ -1,0 +1,25 @@
+sample:
+  resolution: 64
+  num_points: 204800
+  latent_dim: 64
+
+
+dino_hidden_dim: 1280
+
+ditrunner:
+  seq_length: 512
+  model:
+    hidden_size: 2048
+  noise_scheduler:
+    num_train_timesteps: 1000
+    num_inference_timesteps: 50
+    beta_start: 0.00085
+    prediction_type: v_prediction  # 'epsilon' or 'v_prediction'
+    clip_sample: false
+
+
+model_3d:
+  pretrained_path: "TripoSG/pretrained_weights/TripoSG/vae"
+  subfolder: ""
+
+dit_pretrained_path: "TripoSG/pretrained_weights/TripoSG/transformer/diffusion_pytorch_model.safetensors"

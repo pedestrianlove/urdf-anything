@@ -1,0 +1,7 @@
+output*/
+cache/
+checkpoints/
+DINOv3/
+TripoSG/
+figures/
+__pycache__/

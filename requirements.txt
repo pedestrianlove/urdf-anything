@@ -1,0 +1,37 @@
+# =============================================================================
+# PyTorch: 请先根据 CUDA 版本单独安装，不要用本文件安装，以免装成 CPU 版或错误 CUDA。
+# 推荐版本（cu124 官方索引当前可用）: torch==2.6.0, torchvision==0.21.0
+#   pip install torch torchvision --index-url https://download.pytorch.org/whl/cu124
+#
+# 若使用国内镜像报 diffusers/transformers 找不到，请改用 PyPI 官方源：
+#   pip install -r requirements.txt -i https://pypi.org/simple/
+# =============================================================================
+
+# TripoSG + 本仓库共用（diffusers/transformers 固定版本，与 urdf_extracted 一致）
+diffusers==0.35.1
+transformers==4.57.2
+einops
+huggingface_hub
+opencv-python
+trimesh==4.7.4
+accelerate
+# torch-cluster 需在安装完 torch 后再单独安装，见 README「依赖安装顺序」
+omegaconf
+scikit-image
+# peft
+jaxtyping
+typeguard
+# diso 需在安装完 torch 后单独安装：pip install diso --no-build-isolation
+pymeshlab==2023.12.post3
+pyglet<2
+
+# 数值与工具（不锁 numpy，避免与 diffusers/transformers 冲突；如需可改为 numpy>=1.22,<2）
+numpy
+tqdm
+# PyYAML
+# safetensors
+
+# 训练与推理
+wandb
+scipy
+Pillow
