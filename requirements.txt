@@ -1,13 +1,3 @@
-# =============================================================================
-# PyTorch: 请先根据 CUDA 版本单独安装，不要用本文件安装，以免装成 CPU 版或错误 CUDA。
-# 推荐版本（cu124 官方索引当前可用）: torch==2.6.0, torchvision==0.21.0
-#   pip install torch torchvision --index-url https://download.pytorch.org/whl/cu124
-#
-# 若使用国内镜像报 diffusers/transformers 找不到，请改用 PyPI 官方源：
-#   pip install -r requirements.txt -i https://pypi.org/simple/
-# =============================================================================
-
-# TripoSG + 本仓库共用（diffusers/transformers 固定版本，与 urdf_extracted 一致）
 diffusers==0.35.1
 transformers==4.57.2
 einops

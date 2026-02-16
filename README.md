@@ -3,7 +3,7 @@
 Code for training and inference of URDF (joint/link) prediction from images.
 **依赖安装顺序**（避免 torch-cluster 等报错）：
 
-1. **先安装 PyTorch**（须在其余依赖之前，且勿用国内镜像）：
+1. **先安装 PyTorch**
    ```bash
    pip install torch==2.6.0 torchvision==0.21.0 --index-url https://download.pytorch.org/whl/cu124
    ```
@@ -14,9 +14,9 @@ Code for training and inference of URDF (joint/link) prediction from images.
    pip install -r requirements.txt -i https://pypi.org/simple/
    ```
 
-3. **可选：安装 torch-cluster**（仅当启用 TripoSG VAE  encoder 或需要 FPS 采样时）。必须在已安装 torch 之后执行：
+3. **可选：安装 torch-cluster**。必须在已安装 torch 之后执行：
    ```bash
-   pip install torch-cluster
+   pip install torch-cluster --no-build-isolation
    ```
    若从源码构建报错 `No module named 'torch'`，是因为 pip 默认的构建隔离环境里没有 torch。可任选其一：
    - **使用无构建隔离**（在当前环境里构建，能用到已装的 torch）：
