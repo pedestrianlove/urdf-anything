@@ -299,8 +299,7 @@ def main():
     parser.add_argument(
         "--train_test_split",
         type=str,
-        default=None,
-        help="train/test 划分 JSON 路径，格式 {\"train\": [...], \"test\": [...]}，划分时按此加载",
+        default='data_normalized/train_test_split.json',
     )
     args = parser.parse_args()
     token_length = args.token_length
