@@ -16,4 +16,4 @@ python scripts/inference.py \
     --image_path assets/faucet.jpg \
     --model_path $CKPT_PATH \
     --in_the_wild \
-    --output_dir outputs/laptop
+    --output_dir outputs/faucet

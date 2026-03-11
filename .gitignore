@@ -6,3 +6,5 @@ TripoSG/
 figures/
 __pycache__/
 data*
+inference_batch.py 
+inference.sh

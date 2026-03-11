@@ -16,7 +16,7 @@
 
 3. **Install dependencies**：
    ```bash
-   pip install -r requirements.txt -i https://pypi.org/simple/
+   pip install -r  -u requirements.txt -i https://pypi.org/simple/
    ```
 
 4. **Install torch-cluster**。Must be installed after PyTorch:

@@ -26,7 +26,6 @@ def get_3d_triposg(
     output_dir: str | None = None,
     fix_normals: bool = True,
 ):
-    """Generate 3D mesh from image using TripoSG (image-to-3D)."""
     global _TRIPOSG_PIPELINE, _TRIPOSG_RMBG
     try:
         if _TRIPOSG_DIR not in sys.path:
@@ -46,8 +45,8 @@ def get_3d_triposg(
         err = str(e)
         if "libGL" in err or "libgl" in err.lower():
             raise ImportError(
-                f"TripoSG 依赖 cv2 (OpenCV)，当前环境缺少 libGL: {err}. "
-                "解决：安装系统库 `libgl1-mesa-glx` 或 `pip install opencv-python-headless`。"
+                f"TripoSG requires cv2 (OpenCV), but libGL is missing: {err}. "
+                "Please install the system library `libgl1-mesa-glx` or `pip install opencv-python-headless`."
             ) from e
         raise ImportError(
             f"Failed to import TripoSG module: {e}. "
@@ -105,9 +104,9 @@ def get_3d_triposg(
             )
     mesh.export(os.path.join(output_dir, "mesh_for_edit.obj"))
 
-    print("\n可选：在终端中对 mesh 做简单旋转。可多次旋转，直接回车结束。")
-    print("  0: 不旋转（直接回车也等价于结束）")
-    print("  1-6: 围绕 X/Y/Z 轴 ±90°")
+    print("\nOptional: rotate the mesh in the terminal. You can rotate multiple times, press Enter to end.")
+    print("  0: no rotation (pressing Enter is equivalent to ending)")
+    print("  1-6: rotate around X/Y/Z axis ±90°")
 
     angle_map = {
         "1": (np.pi / 2, [1, 0, 0]),
@@ -118,18 +117,18 @@ def get_3d_triposg(
         "6": (-np.pi / 2, [0, 0, 1]),
     }
     angle_map_print = {
-        "1": "绕X轴旋转90度",
-        "2": "绕X轴旋转-90度",
-        "3": "绕Y轴旋转90度",
-        "4": "绕Y轴旋转-90度",
-        "5": "绕Z轴旋转90度",
-        "6": "绕Z轴旋转-90度",
+        "1": "rotate around X axis 90°",
+        "2": "rotate around X axis -90°",
+        "3": "rotate around Y axis 90°",
+        "4": "rotate around Y axis -90°",
+        "5": "rotate around Z axis 90°",
+        "6": "rotate around Z axis -90°",
     }
     print(f"angle_map_print: {angle_map_print}")
     while True:
         try:
             choice = input(
-                "输入旋转编号并回车（直接回车=确认并结束旋转）[0-6]: "
+                "Enter the rotation number and press Enter (pressing Enter is equivalent to ending): [0-6]: "
             ).strip()
         except EOFError:
             choice = "0"
@@ -143,7 +142,7 @@ def get_3d_triposg(
                 os.path.join(output_dir, "mesh_for_edit.obj")
             )
         else:
-            print("输入无效，请输入 0–6，或直接回车结束。")
+            print("Invalid input, please enter 0–6, or press Enter to end.")
 
     bmin, bmax = mesh.bounds
     size = bmax - bmin

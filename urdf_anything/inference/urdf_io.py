@@ -1,4 +1,3 @@
-"""URDF construction: write link/joint to URDF file."""
 import os
 import xml.etree.ElementTree as ET
 import torch
@@ -14,7 +13,6 @@ def construct_urdf(
     lower_upper_limits=None,
     motion_type=None,
 ):
-    """Append a link and joint to URDF (create file if link_idx==0)."""
     if link_idx == 0:
         root = ET.Element("robot", name="generated_robot")
         tree = ET.ElementTree(root)

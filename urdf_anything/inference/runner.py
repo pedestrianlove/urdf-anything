@@ -1,4 +1,3 @@
-"""URDF inference runner: load model, generate links, write URDF."""
 import os
 from typing import Optional, Dict, List
 
@@ -16,10 +15,7 @@ from TripoSG.triposg.inference_utils import hierarchical_extract_geometry
 from .utils import resize_image_tensor, ensure_watertight
 from .urdf_io import construct_urdf
 
-
 class URDFInference:
-    """URDF inference: image/mesh -> DINO + DiT -> link meshes + URDF."""
-
     def __init__(
         self,
         model_path: str,
@@ -76,7 +72,6 @@ class URDFInference:
     def mesh_to_encode_whole(
         self, mesh: trimesh.Trimesh, num_pc: int = 204800
     ) -> torch.Tensor:
-        """Encode whole mesh to latent (encode_whole)."""
         if not isinstance(mesh, trimesh.Trimesh):
             if hasattr(mesh, "vertices") and hasattr(mesh, "faces"):
                 vertices = (
@@ -160,7 +155,6 @@ class URDFInference:
         mesh_b: trimesh.Trimesh,
         n_points: int = 10000,
     ) -> float:
-        """Chamfer distance between two meshes (point clouds)."""
         points_a = np.asarray(mesh_a.sample(n_points))
         points_b = np.asarray(mesh_b.sample(n_points))
         tree_a = cKDTree(points_a)
@@ -274,7 +268,6 @@ class URDFInference:
         save_meshes: bool = True,
         save_urdf: bool = True,
     ) -> Dict:
-        """Run full pipeline: image + whole mesh -> link meshes + URDF."""
         os.makedirs(output_dir, exist_ok=True)
         print(f"processing image: {image_path}")
         dino_features = self.process_image(image_path)
