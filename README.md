@@ -101,7 +101,7 @@ snapshot_download(repo_id='facebook/dinov3-vith16plus-pretrain-lvd1689m', local_
 "
 ```
 
-Important: There is a little problem with TripoSG/triposg/models/autoencoders/autoencoder_kl_triposg.py, you need to uncomment the line `from torch_cluster import fps`.
+**Important: There is a little problem with TripoSG/triposg/models/autoencoders/autoencoder_kl_triposg.py, you need to uncomment the line 15 `from torch_cluster import fps`.**
 
 ## Training
 ### Data Preparation
