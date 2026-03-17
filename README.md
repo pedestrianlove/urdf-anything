@@ -23,6 +23,11 @@
     <span class="author-block">
       <a href="https://scholar.google.com/citations?hl=en&user=voqw10cAAAAJ&view_op=list_works&sortby=pubdate">Shanghang Zhang</a><sup>1</sup></span>
   </div>
+  <div class="is-size-5 publication-authors" style="margin-top: 1rem;">
+    <span class="author-block" style="margin-right: 1.5rem;"><sup>1</sup>Peking University</span>
+    <span class="author-block" style="margin-right: 1.5rem;"><sup>2</sup>University of Oxford</span>
+    <span class="author-block"><sup>3</sup>University of Washington</span>
+  </div>
 </div>
 
 ## Requirements
