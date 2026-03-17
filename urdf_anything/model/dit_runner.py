@@ -66,15 +66,23 @@ class DiTRunner(nn.Module):
         self.num_inference_timesteps = noise_scheduler_config["num_inference_timesteps"]
         self.prediction_type = noise_scheduler_config["prediction_type"]
 
-    def conditional_sample(self, cond):
+    def conditional_sample(self, cond, generator: torch.Generator | None = None):
         noisy_latents = torch.randn(
-            cond["encode_whole"].shape, device=cond["encode_whole"].device
+            cond["encode_whole"].shape,
+            device=cond["encode_whole"].device,
+            generator=generator,
         )
         batch_size = cond["encode_whole"].shape[0]
         device = cond["encode_whole"].device
-        noisy_param1 = torch.randn(batch_size, 3, device=device)
-        noisy_param2 = torch.randn(batch_size, 3, device=device)
-        noisy_param3 = torch.randn(batch_size, 2, device=device)
+        noisy_param1 = torch.randn(
+            batch_size, 3, device=device, generator=generator
+        )
+        noisy_param2 = torch.randn(
+            batch_size, 3, device=device, generator=generator
+        )
+        noisy_param3 = torch.randn(
+            batch_size, 2, device=device, generator=generator
+        )
         motion_type_final = None
         motion_type_pred = None
         self.noise_scheduler.set_timesteps(

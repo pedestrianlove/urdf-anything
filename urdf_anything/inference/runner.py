@@ -26,12 +26,16 @@ class URDFInference:
         eot_threshold: float = 0.5,
         max_reconstruction_attempts: int = 5,
         overlap_chamfer_threshold: float = 1e-4,
+        seed: int = 42,
+        vae_deterministic: bool = False,
     ):
         self.device = device
         self.num_tokens = num_tokens
         self.eot_threshold = eot_threshold
         self.max_reconstruction_attempts = max_reconstruction_attempts
         self.overlap_chamfer_threshold = overlap_chamfer_threshold
+        self.seed = int(seed)
+        self.vae_deterministic = bool(vae_deterministic)
 
         print(f"loading model: {model_path}")
         self.model = URDFModel.from_checkpoint(
@@ -89,6 +93,9 @@ class URDFInference:
                 raise ValueError(
                     f"cannot convert to trimesh.Trimesh: {type(mesh)}"
                 )
+        # Trimesh surface sampling uses NumPy RNG under the hood.
+        # Seed it to keep point sampling reproducible.
+        np.random.seed(self.seed + 101)
         surface_points, face_indices = mesh.sample(num_pc, return_index=True)
         face_normals = mesh.face_normals[face_indices]
         points = torch.cat(
@@ -103,12 +110,19 @@ class URDFInference:
                 points,
                 num_tokens=self.num_tokens,
                 return_dict=False,
+                seed=self.seed + 201,
             )
-            encode_whole = (
-                encode_output[0].sample()
-                if isinstance(encode_output, tuple)
-                else encode_output.latent_dist.sample()
-            )
+            if isinstance(encode_output, tuple):
+                posterior = encode_output[0]
+            else:
+                posterior = encode_output.latent_dist
+
+            if self.vae_deterministic:
+                gen = torch.Generator(device=self.device)
+                gen.manual_seed(self.seed + 301)
+                encode_whole = posterior.sample(generator=gen)
+            else:
+                encode_whole = posterior.sample()
         return encode_whole
 
     def encode_prev_meshes(
@@ -121,6 +135,7 @@ class URDFInference:
             combined_mesh = prev_meshes[0]
         else:
             combined_mesh = trimesh.util.concatenate(prev_meshes)
+        np.random.seed(self.seed + 1000 + len(prev_meshes))
         surface_points, face_indices = combined_mesh.sample(
             204800, return_index=True
         )
@@ -141,12 +156,19 @@ class URDFInference:
                 prev_points,
                 num_tokens=self.num_tokens,
                 return_dict=False,
+                seed=self.seed + 1000 + len(prev_meshes),
             )
-            encode_pre = (
-                encode_pre_output[0].sample()
-                if isinstance(encode_pre_output, tuple)
-                else encode_pre_output.latent_dist.sample()
-            )
+            if isinstance(encode_pre_output, tuple):
+                posterior = encode_pre_output[0]
+            else:
+                posterior = encode_pre_output.latent_dist
+
+            if self.vae_deterministic:
+                gen = torch.Generator(device=self.device)
+                gen.manual_seed(self.seed + 2000 + len(prev_meshes))
+                encode_pre = posterior.sample(generator=gen)
+            else:
+                encode_pre = posterior.sample()
         return encode_pre
 
     def chamfer_distance_between_meshes(
@@ -171,6 +193,7 @@ class URDFInference:
         encode_pre: torch.Tensor,
         encode_whole: torch.Tensor,
         link_idx: int,
+        generator: Optional[torch.Generator] = None,
     ) -> Dict:
         """Generate one link: DiT sample -> mesh (or EoT)."""
         cond = {
@@ -179,7 +202,9 @@ class URDFInference:
             "encode_whole": encode_whole,
         }
         with torch.no_grad():
-            output = self.model.DiTRunner.conditional_sample(cond)
+            output = self.model.DiTRunner.conditional_sample(
+                cond, generator=generator
+            )
             predicted_latent = output["latent"]
             param1_pred = output["param1"]
             param2_pred = output["param2"]
@@ -236,8 +261,17 @@ class URDFInference:
         """Generate link with retries."""
         for attempt in range(self.max_reconstruction_attempts):
             try:
+                # Make sampling reproducible even with retries.
+                # Different links/attempts use different seeds deterministically.
+                attempt_seed = self.seed + link_idx * 1000 + attempt
+                gen = torch.Generator(device=self.device)
+                gen.manual_seed(attempt_seed)
                 result = self.generate_link(
-                    dino_features, encode_pre, encode_whole, link_idx
+                    dino_features,
+                    encode_pre,
+                    encode_whole,
+                    link_idx,
+                    generator=gen,
                 )
                 if result["pred_mesh"] is not None or result["is_eot"]:
                     if attempt > 0:

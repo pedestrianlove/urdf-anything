@@ -58,8 +58,24 @@ def main():
         default=42,
         help="random seed for TripoSG and PyTorch",
     )
+    parser.add_argument(
+        "--deterministic",
+        action="store_true",
+        help="enable (best-effort) deterministic inference for PyTorch/CUDA",
+    )
+    parser.add_argument(
+        "--vae_deterministic",
+        action="store_true",
+        help="make 3D VAE latent sampling reproducible (fixed generator)",
+    )
 
     args = parser.parse_args()
+
+    # Must be set before some CUDA kernels are initialized
+    os.environ["PYTHONHASHSEED"] = str(args.seed)
+    if args.deterministic:
+        # Recommended by PyTorch for deterministic CuBLAS (CUDA 10.2+)
+        os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
 
     # Set random seeds for reproducibility
     random.seed(args.seed)
@@ -67,6 +83,13 @@ def main():
     torch.manual_seed(args.seed)
     if args.device.startswith("cuda") and torch.cuda.is_available():
         torch.cuda.manual_seed_all(args.seed)
+    if args.deterministic:
+        torch.backends.cudnn.benchmark = False
+        torch.backends.cudnn.deterministic = True
+        try:
+            torch.use_deterministic_algorithms(True)
+        except Exception as e:
+            print(f"Warning: failed to enable full deterministic algorithms: {e}")
 
     if not args.in_the_wild and not args.whole_mesh_path:
         raise ValueError(
@@ -96,6 +119,8 @@ def main():
         eot_threshold=args.eot_threshold,
         max_reconstruction_attempts=args.max_reconstruction_attempts,
         overlap_chamfer_threshold=args.overlap_chamfer_threshold,
+        seed=args.seed,
+        vae_deterministic=args.vae_deterministic,
     )
 
     if args.in_the_wild:
