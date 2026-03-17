@@ -107,15 +107,17 @@ The structure of the dataset is as follows:
 URDF-Anything-plus:
 ├── data_normalized/
 │   ├── Laptop_urdf/
-│   │   ├── images/
-│   │   ├── xxx.obj
-│   │   ├── test.urdf/
-│   │   ├── info.json/
+│   │   ├── <id>/
+│   │   │   ├── images/
+│   │   │   ├── xxx.obj
+│   │   │   ├── test.urdf/
+│   │   │   ├── info.json/
 │   ├── Refrigerator_urdf/
-│   │   ├── images/
-│   │   ├── xxx.obj
-│   │   ├── test.urdf/
-│   │   ├── info.json/
+│   │   ├── <id>/
+│   │   │   ├── images/
+│   │   │   ├── xxx.obj
+│   │   │   ├── test.urdf/
+│   │   │   ├── info.json/
 │   ├── ...
 ```
 
