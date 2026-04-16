@@ -17,6 +17,7 @@ cuda = "12.6.*"
 cuda-toolkit = "*"
 gcc = "*"
 pymeshlab = ">=2025.7.post1,<2026"
+cudnn = ">=9.10.2.21,<10"
 
 [pypi-options]
 index-url = "https://pypi.org/simple"
