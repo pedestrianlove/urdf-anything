@@ -9,4 +9,6 @@ data*
 inference_batch.py 
 inference.sh
 *.obj
-*.png
+*.png# pixi environments
+.pixi/*
+!.pixi/config.toml
